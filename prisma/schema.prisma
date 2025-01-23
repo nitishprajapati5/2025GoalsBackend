@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Journal {
+  id           Int            @id @default(autoincrement())
+  journalName  String
+  isDisabled   Boolean        @default(false)
+  userId       Int
+  uuid         String         @default(uuid())
+  Registration Registration   @relation(fields: [userId], references: [id])
+  JournalLeafs JournalLeafs[]
+
+  @@index([userId], map: "Journal_userId_fkey")
+}
+
+model JournalLeafs {
+  id                 Int          @id @default(autoincrement())
+  journalId          Int
+  journalTitle       String
+  journalDescription String?
+  journalContent     String       @db.LongText
+  journalImage       String?
+  userId             Int
+  uuid               String       @default(uuid())
+  Journal            Journal      @relation(fields: [journalId], references: [id])
+  Registration       Registration @relation(fields: [userId], references: [id])
+
+  @@index([journalId], map: "JournalLeafs_journalId_fkey")
+  @@index([userId], map: "JournalLeafs_userId_fkey")
+}
+
+model Registration {
+  id           Int            @id @default(autoincrement())
+  username     String         @unique
+  email        String
+  password     String
+  name         String
+  Journal      Journal[]
+  JournalLeafs JournalLeafs[]
+}
