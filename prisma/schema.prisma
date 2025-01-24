@@ -13,7 +13,7 @@ model Journal {
   isDisabled   Boolean        @default(false)
   userId       Int
   uuid         String         @default(uuid())
-  Registration Registration   @relation(fields: [userId], references: [id])
+  Registration Registration   @relation(fields: [userId], references: [id],onUpdate: Cascade)
   JournalLeafs JournalLeafs[]
 
   @@index([userId], map: "Journal_userId_fkey")
@@ -24,13 +24,15 @@ model JournalLeafs {
   journalId          Int
   journalTitle       String
   journalDescription String?
+  journalDate        DateTime     @db.Date()
   journalContent     String       @db.LongText
-  journalImage       String?
+  journalImage       String       @db.LongText
+  imageType          String
   userId             Int
   uuid               String       @default(uuid())
-  Journal            Journal      @relation(fields: [journalId], references: [id])
-  Registration       Registration @relation(fields: [userId], references: [id])
-
+  Journal            Journal      @relation(fields: [journalId], references: [id],onUpdate: Cascade)
+  Registration       Registration @relation(fields: [userId], references: [id],onUpdate: Cascade)
+  isDisabled         Boolean     @default(false)
   @@index([journalId], map: "JournalLeafs_journalId_fkey")
   @@index([userId], map: "JournalLeafs_userId_fkey")
 }
@@ -41,6 +43,7 @@ model Registration {
   email        String
   password     String
   name         String
-  Journal      Journal[]
+  Journal      Journal[] 
   JournalLeafs JournalLeafs[]
+  isDisabled   Boolean        @default(false)
 }
