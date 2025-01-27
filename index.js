@@ -5,6 +5,8 @@ import dashboardRoute from './routes/dashboard.js'
 import journalRoute from './routes/journalName.js'
 import journalLeaf from './routes/journalLeafs.js'
 import cookieParser from "cookie-parser";
+import cors from 'cors'
+
 const app = express();
 const port = 3001
 
@@ -13,6 +15,7 @@ dbConnection().then((res) => {
 }).catch((error) => {
     console.log("Error Occured",Error)
 })
+app.use(cors())
 app.use(json())
 app.use(cookieParser())
 app.use(urlencoded({extended:true}))
