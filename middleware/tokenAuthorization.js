@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken'
 export function tokenAuthorization(req,res,next){
     console.log("Middleware Hit")
     const authCookie = req.cookies['auth-cookie']
-
+    console.log("Auth Cookie is",authCookie)
     if(authCookie === null){
         return res.json({
             responseBody:new ApiError(401,"UnAuthorized Access")

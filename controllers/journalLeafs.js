@@ -13,17 +13,28 @@ export const getAllLeafs = async(req,res) =>{
 
         const {journalId,date} = req.body.requestBody
         
-
-        const result = await prisma.journalLeafs.findMany({
+        const data = await prisma.journal.findFirst({
             where:{
                 AND:{
-                    journalId:journalId,
-                    journalDate:date,
+                    id:journalId,
                     userId:req.user.id,
                     isDisabled:false
                 }
             }
         })
+
+        console.log(data)
+
+        const result = await prisma.journalLeafs.findMany({
+            where:{
+                AND:{
+                    journalId:journalId,
+                    userId:req.user.id,
+                    isDisabled:false
+                }
+            }
+        })
+        console.log(result)
         if(result){
             return res.json({
                 responseBody:new ApiResponse(200,result,"SUCCESS")
@@ -40,11 +51,14 @@ export const getAllLeafs = async(req,res) =>{
 export const addJournalLeafs = async(req,res) => {
     try {
         
+
+        console.log(req.body.data)
+
         const imageData = req.file.buffer
         const {title,description,editorData,date,journalId} = req.body
-        // console.log(title,description,editorData,date,journalId)
-        // console.log(imageData)
-        // console.log(req.user)
+        console.log(title,description,editorData,date,journalId)
+        console.log(imageData)
+        console.log(req.user)
         const data = Buffer.from(imageData).toString('base64')
         // console.log(data)
         const result = await prisma.journalLeafs.create({
@@ -73,49 +87,71 @@ export const addJournalLeafs = async(req,res) => {
     }
 }
 
-export const editJournalLeafs = async(req,res) =>{
+export const editJournalLeafs = async (req, res) => {
     try {
-        console.log(req.file)
+        // Destructure the body of the request
+        const { title, description, editorData, date, journalId, id } = req.body;
+        let imageData = null;
 
-        const imageData = req.file.buffer
-        const {title,description,editorData,date,journalId,id} = req.body
-        const data = Buffer.from(imageData).toString('base64')
-        const result = await prisma.journalLeafs.update({
-            where:{
-               id:parseInt(id)
-            },
-            data:{
-                journalTitle:title,
-                journalDescription:description,
-                journalContent:editorData,
-                journalDate:date,
-                journalImage:data
-            }
-        })
-
-        if(result){
-            return res.json({
-                responseBody:new ApiResponse(200,result,"SUCCESS")
-            })
+        // Check if there is a file attached in the request
+        if (req.file) {
+            imageData = req.file.buffer; // Retrieve the file buffer
         }
 
-    } catch (error) {
-        console.log(error)
+        // Prepare data for updating the journal
+        const updateData = {
+            journalTitle: title,
+            journalDescription: description,
+            journalContent: editorData,
+            journalDate: date,
+        };
+
+        // If there's an image, add it to the update data
+        if (imageData) {
+            const data = Buffer.from(imageData).toString('base64');
+            updateData.journalImage = data; // Only add the image if it's provided
+        }
+
+        // Perform the update operation in the database
+        const result = await prisma.journalLeafs.update({
+            where: {
+                id: parseInt(id), // Find the journal by its ID
+            },
+            data: updateData, // Update the journal with the provided data
+        });
+
+        // If the update was successful, return the result
+        if (result) {
+            return res.json({
+                responseBody: new ApiResponse(200, result, "SUCCESS"),
+            });
+        }
+
+        // If no result, return an error (shouldn't happen in normal scenarios)
         return res.json({
-            responseBody:new ApiError(404,"FAILURE",error,"")
-        })
+            responseBody: new ApiError(404, "FAILURE", "Journal not found", ""),
+        });
+
+    } catch (error) {
+        console.log(error);
+        return res.json({
+            responseBody: new ApiError(404, "FAILURE", error.message, ""),
+        });
     }
 }
 
+
 export const deleteJournalLeafs = async(req,res) =>{
     try {
-        const {id} = req.body.requestBody
+        const {journalId} = req.body.requestBody
+        console.log("Request ID",journalId)
         const result = await prisma.journalLeafs.update({
             data:{
                 isDisabled:true
             },
             where:{
-                id:id,
+                id:journalId,
+                userId:req.user.id
             }
             
         })
@@ -133,3 +169,24 @@ export const deleteJournalLeafs = async(req,res) =>{
     }
 }
 
+export const getLeafBasedonId = async(req,res) =>{
+    try {
+        const {id} = req.body.requestBody
+        const result = await prisma.journalLeafs.findFirst({
+            where:{
+                journalId:id,
+                isDisabled:false
+            }
+        })
+        if(result){
+            return res.json({
+                responseBody:new ApiResponse(200,result,"SUCCESS")
+            })
+        }
+    } catch (error) {
+        console.log(error)
+        return res.json({
+            responseBody:new ApiError(404,"FAILURE",error,"")
+        })
+    }
+}

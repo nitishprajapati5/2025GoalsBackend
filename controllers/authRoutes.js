@@ -32,13 +32,13 @@ export async function Login(req, res) {
             res.cookie('auth-cookie', generateJWT(user), {
                 httpOnly: true, // Prevent client-side JS access
                 secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-                sameSite: 'Strict', // Prevent CSRF attacks
+                sameSite: 'Strict', // Allow cross-origin cookies
                 maxAge: 1000 * 60 * 60 * 24 // 1 day cookie
             });
-
             return res.status(200).json({
                 responseBody: new ApiResponse(200, user, "SUCCESS")
             });
+
         } else {
             return res.status(401).json({
                 responseBody: new ApiResponse(401, null, "Invalid email or password")
@@ -88,8 +88,8 @@ export async function Registration(req, res) {
         // Set the auth cookie
         res.cookie('auth-cookie', token, {
             httpOnly: true, // Prevent client-side JS access
-            secure: process.env.NODE_ENV === 'production', // Only send over HTTPS in production
-            sameSite: 'Strict', // Prevent CSRF attacks
+            secure: false, // Only send over HTTPS in production
+            sameSite: 'None', // Prevent CSRF attacks
             maxAge: 1000 * 60 * 60 * 24 // 1 day cookie
         });
 
