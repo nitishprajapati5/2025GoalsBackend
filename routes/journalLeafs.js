@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { tokenAuthorization } from "../middleware/tokenAuthorization.js";
-import { addJournalLeafs, deleteJournalLeafs, editJournalLeafs, getAllLeafs, getLeafBasedonId } from "../controllers/journalLeafs.js";
+import { addJournalLeafs, deleteJournalLeafs, editJournalLeafs, getAllLeafs, getLeafBasedonId, shareUUIDBasedonJournal } from "../controllers/journalLeafs.js";
 import multer from "multer";
 
 const router = Router()
@@ -13,5 +13,5 @@ router.post('/addleafs',tokenAuthorization,upload.single('file'),addJournalLeafs
 router.post('/editleaf',tokenAuthorization,upload.single('file'),editJournalLeafs)
 router.post('/deleteleaf',tokenAuthorization,deleteJournalLeafs)
 router.post('/getLeafBasedonId',tokenAuthorization,getLeafBasedonId)
-
+router.post('/shareUUIDBasedonJournal',tokenAuthorization,shareUUIDBasedonJournal)
 export default router;
