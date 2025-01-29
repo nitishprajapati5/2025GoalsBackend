@@ -196,3 +196,38 @@ export const shareUUIDBasedonJournal = async(req,res) =>{
     });
   }
 };
+
+export const shareJournalPage = async(req,res) =>{
+
+  try {
+    const {uuid} = req.body.requestBody
+
+
+  const data = await prisma.journalLeafs.update({
+    where:{
+      uuid:uuid,
+    },
+    data:{
+      views:{
+        increment:1
+      }
+    }
+  })
+
+  const result = await prisma.journalLeafs.findFirst({
+    where:{
+      uuid:uuid
+    }
+  })
+  if (result) {
+    return res.json({
+      responseBody: new ApiResponse(200, result, "SUCCESS"),
+    });
+  }
+} catch (error) {
+  console.log(error);
+  return res.json({
+    responseBody: new ApiError(404, "FAILURE", error, ""),
+  });
+}
+};

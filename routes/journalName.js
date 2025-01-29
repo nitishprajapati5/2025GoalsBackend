@@ -9,4 +9,5 @@ router.post('/addJournal',tokenAuthorization,addJournal)
 router.put('/editjournalName',tokenAuthorization,editJournalName)
 router.post('/deletejournal',tokenAuthorization,deleteJournal)
 
+
 export default router;

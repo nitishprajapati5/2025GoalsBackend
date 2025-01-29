@@ -29,10 +29,11 @@ model JournalLeafs {
   journalImage       String       @db.LongText
   imageType          String
   userId             Int
-  uuid               String       @default(uuid())
+  uuid               String       @default(uuid()) @unique
   Journal            Journal      @relation(fields: [journalId], references: [id],onUpdate: Cascade)
   Registration       Registration @relation(fields: [userId], references: [id],onUpdate: Cascade)
   isDisabled         Boolean     @default(false)
+  views              Int          @default(0)
   @@index([journalId], map: "JournalLeafs_journalId_fkey")
   @@index([userId], map: "JournalLeafs_userId_fkey")
 }
