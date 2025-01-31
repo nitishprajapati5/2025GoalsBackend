@@ -88,7 +88,7 @@ export async function Registration(req, res) {
         // Set the auth cookie
         res.cookie('auth-cookie', token, {
             httpOnly: true, // Prevent client-side JS access
-            secure: false, // Only send over HTTPS in production
+            secure: process.env.NODE_ENV === 'production', // Only use `secure` cookies in production
             sameSite: 'None', // Prevent CSRF attacks
             maxAge: 1000 * 60 * 60 * 24 // 1 day cookie
         });
