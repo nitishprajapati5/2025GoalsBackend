@@ -27,7 +27,7 @@ app.use(cookieParser())
 //   });
 
 app.use(cors({
-    origin: 'http://localhost:3000',
+    origin: ['http://localhost:3000','http://localhost:3002','https://2025goals-eta.vercel.app'],
     credentials: true
 }))
 app.use(json())

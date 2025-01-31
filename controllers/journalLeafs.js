@@ -39,7 +39,7 @@ export const getAllLeafs = async (req, res) => {
 
 export const addJournalLeafs = async (req, res) => {
   try {
-    console.log(req.body.data);
+    console.log("Reading the File",req.body.file);
 
     const imageData = req.file.buffer;
     const { title, description, editorData, date, journalId } = req.body;
